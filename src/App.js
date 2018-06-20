@@ -1,19 +1,28 @@
 import React from 'react';
+import AddForm from './components/AddForm';
+import Persons from './components/Persons';
+import axios from 'axios';
 
 class App extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      persons: [
-        { name: 'Arto Hellas', number: '040-123456' },
-        { name: 'Martti Tienari', number: '040-123456' },
-        { name: 'Arto Järvinen', number: '040-123456' },
-        { name: 'Lea Kutvonen', number: '040-123456' }
-      ],
+      persons: [],
       newName: '',
       newNumber: '',
       filterText: ''
     }
+  }
+
+  componentDidMount() {
+    axios
+      .get('http://localhost:3001/persons')
+      .then(response => {
+        console.log(response.data);
+        this.setState({
+          persons: response.data
+        });
+      });
   }
 
   handleNameChange = (e) => {  
@@ -35,7 +44,7 @@ class App extends React.Component {
     }
     const newPerson = {
       name: this.state.newName,
-      number: this.state.newNumber
+      number: this.state.newNumber,
     };
     this.setState({
       persons: this.state.persons.concat(newPerson),
@@ -60,22 +69,15 @@ class App extends React.Component {
       <div>
         <h2>Puhelinluettelo</h2>
         <p>rajaa näytettäviä <input onChange={this.filterPersons}/></p>
-        <form onSubmit={this.addPerson}>
-          <div>
-            nimi: <input value={this.state.newName} onChange={this.handleNameChange}/>
-          </div>
-          <div>
-            numero: <input value={this.state.newNumber} onChange={this.handleNumberChange}/>
-          </div>
-          <div>
-            <button type="submit">lisää</button>
-          </div>
-        </form>
+        <AddForm 
+          newName={this.state.newName} 
+          newNumber={this.state.newNumber}
+          handleNameChange={this.handleNameChange}
+          handleNumberChange={this.handleNumberChange}
+          addPerson={this.addPerson} 
+        />
         <h2>Numerot</h2>
-          {this.state.persons
-            .filter((person) => person.name.indexOf(this.state.filterText) !== -1)
-            .map((person) => <p key={person.name}>{person.name} {person.number}</p>)
-          }
+        <Persons persons={this.state.persons} filterText={this.state.filterText}/>
       </div>
     )
   }
