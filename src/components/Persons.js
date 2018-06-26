@@ -6,7 +6,7 @@ const Persons = (props) => {
     <div>
       {props.persons
         .filter((person) => person.name.indexOf(props.filterText) !== -1)
-        .map((person) => <Person person={person} />)
+        .map((person) => <Person person={person} key={person.name}/>)
       }
     </div>
   );

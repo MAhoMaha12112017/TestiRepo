@@ -46,11 +46,16 @@ class App extends React.Component {
       name: this.state.newName,
       number: this.state.newNumber,
     };
-    this.setState({
-      persons: this.state.persons.concat(newPerson),
-      newName: '',
-      newNumber: '',
-    });
+    axios.post('http://localhost:3001/persons', newPerson)
+      .then((response) => {
+        console.log(response);
+        this.setState({
+          persons: this.state.persons.concat(response.data),
+          newName: '',
+          newNumber: '',
+        });
+      });
+    
   }
 
   checkDuplicate = (name) => {
