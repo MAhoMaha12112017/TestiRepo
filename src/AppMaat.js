@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import axios from 'axios';
+import Countries from './components/Countries';
 
 class AppMaat extends Component {
   constructor(props) {
@@ -21,7 +22,9 @@ class AppMaat extends Component {
   }
 
   filterCountries = (e) => {
-    const countriesFiltered = this.state.maat.filter((country) => country.name.toLowerCase().startsWith(e.target.value.toLowerCase()));
+    const countriesFiltered = this.state.maat
+      .filter((country) => country.name.toLowerCase().startsWith(e.target.value.toLowerCase()));
+
     this.setState({
       countriesToShow: countriesFiltered
     });
@@ -30,9 +33,8 @@ class AppMaat extends Component {
   render() {
     return(
       <div>
-        Maat
         <p>find countries <input onChange={this.filterCountries}/></p>
-        {this.state.countriesToShow.map((country) => <p key={country.name}>{country.name}</p>)}
+        <Countries countries={this.state.countriesToShow} />
       </div>
     );
   }
