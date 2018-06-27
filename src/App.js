@@ -1,7 +1,8 @@
 import React from 'react';
 import AddForm from './components/AddForm';
 import Persons from './components/Persons';
-import axios from 'axios';
+// import axios from 'axios';
+import personService from './services/persons';
 
 class App extends React.Component {
   constructor(props) {
@@ -15,10 +16,10 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    axios
-      .get('http://localhost:3001/persons')
+    // axios
+    //   .get('http://localhost:3001/persons')
+    personService.getAll()
       .then(response => {
-        console.log(response.data);
         this.setState({
           persons: response.data
         });
@@ -46,9 +47,9 @@ class App extends React.Component {
       name: this.state.newName,
       number: this.state.newNumber,
     };
-    axios.post('http://localhost:3001/persons', newPerson)
+    // axios.post('http://localhost:3001/persons', newPerson)
+    personService.create(newPerson)
       .then((response) => {
-        console.log(response);
         this.setState({
           persons: this.state.persons.concat(response.data),
           newName: '',
