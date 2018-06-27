@@ -19,9 +19,9 @@ class App extends React.Component {
     // axios
     //   .get('http://localhost:3001/persons')
     personService.getAll()
-      .then(response => {
+      .then(persons => {
         this.setState({
-          persons: response.data
+          persons
         });
       });
   }
@@ -49,9 +49,9 @@ class App extends React.Component {
     };
     // axios.post('http://localhost:3001/persons', newPerson)
     personService.create(newPerson)
-      .then((response) => {
+      .then((persons) => {
         this.setState({
-          persons: this.state.persons.concat(response.data),
+          persons: this.state.persons.concat(persons),
           newName: '',
           newNumber: '',
         });

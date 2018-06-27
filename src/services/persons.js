@@ -6,11 +6,11 @@ const getAll = () => {
 }
 
 const create = (newObject) => {
-  return axios.post(baseUrl, newObject)
+  return axios.post(baseUrl, newObject).then((r) => r.data);
 }
 
-const update = (id, newObject) => {
-  return axios.put(`${baseUrl}/${id}`, newObject)
-}
+// const update = (id, newObject) => {
+//   return axios.put(`${baseUrl}/${id}`, newObject).then((r) => r.data);
+// }
 
-export default { getAll, create, update }
+export default { getAll, create } // update
