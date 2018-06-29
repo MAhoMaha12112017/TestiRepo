@@ -69,16 +69,31 @@ class App extends React.Component {
     });
   }
 
-  deletePerson = (e) => {
-    const result = window.confirm(`Poistetaanko ${e.target.value}?`);
-    console.log(e.target.value)
-    if (result) {
-      personService.deletePerson(e.target.value);
+  deletePerson = (id, name) => {
+    return () => {
+      const result = window.confirm(`Poistetaanko ${name}?`);
+      console.log(id)
+      if (result) {
+        personService.deletePerson(id);
+        const filteredPersons = this.state.persons.filter((person) => person.id !== id);
+        this.setState({
+          persons: filteredPersons
+        });
+      }
     }
-    const filteredPersons = this.state.persons.filter((person) => person.id !== e.target.value);
-    this.setState({
-      persons: filteredPersons
-    });
+  }
+
+  addPersons = () => {
+    return (
+      <table>
+        <tbody>
+          {this.state.persons
+            .filter((person) => person.name.indexOf(this.state.filterText) !== -1)
+            .map((person) => <Person person={person} key={person.name} deletePerson={this.deletePerson(person.id, person.name)}/>)
+          }
+        </tbody>
+      </table>
+    )
   }
 
   render() {
@@ -94,10 +109,7 @@ class App extends React.Component {
           addPerson={this.addPerson} 
         />
         <h2>Numerot</h2>
-        {this.state.persons
-          .filter((person) => person.name.indexOf(this.state.filterText) !== -1)
-          .map((person) => <Person person={person} key={person.name} deletePerson={this.deletePerson}/>)
-        }
+        {this.addPersons()}
       </div>
     )
   }
