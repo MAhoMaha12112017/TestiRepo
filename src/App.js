@@ -1,8 +1,7 @@
 import React from 'react';
 import AddForm from './components/AddForm';
-import Persons from './components/Persons';
-// import axios from 'axios';
-import personService from './services/persons';
+import Person from './components/Person';
+import personService from './services/persons'; // includes axios
 
 class App extends React.Component {
   constructor(props) {
@@ -70,6 +69,18 @@ class App extends React.Component {
     });
   }
 
+  deletePerson = (e) => {
+    const result = window.confirm(`Poistetaanko ${e.target.value}?`);
+    console.log(e.target.value)
+    if (result) {
+      personService.deletePerson(e.target.value);
+    }
+    const filteredPersons = this.state.persons.filter((person) => person.id !== e.target.value);
+    this.setState({
+      persons: filteredPersons
+    });
+  }
+
   render() {
     return (
       <div>
@@ -83,7 +94,10 @@ class App extends React.Component {
           addPerson={this.addPerson} 
         />
         <h2>Numerot</h2>
-        <Persons persons={this.state.persons} filterText={this.state.filterText}/>
+        {this.state.persons
+          .filter((person) => person.name.indexOf(this.state.filterText) !== -1)
+          .map((person) => <Person person={person} key={person.name} deletePerson={this.deletePerson}/>)
+        }
       </div>
     )
   }
