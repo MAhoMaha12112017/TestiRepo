@@ -39,28 +39,53 @@ class App extends React.Component {
 
   addPerson = (e) => {
     e.preventDefault();
-    if (this.checkDuplicate(this.state.newName)) {
-      return;
-    }
+
     const newPerson = {
       name: this.state.newName,
       number: this.state.newNumber,
     };
-    // axios.post('http://localhost:3001/persons', newPerson)
-    personService.create(newPerson)
-      .then((persons) => {
+
+    const duplicateID = this.checkDuplicate(this.state.newName);
+    if (duplicateID) { // person exists
+
+      // confirmation needed
+      const confirmation = window.confirm(`${this.state.newName} on jo luettelossa, korvataanko vanha numero uudella?`);
+      if (!confirmation) {
+        return;
+      }
+
+      // old person updated
+      personService.update(duplicateID, newPerson)
+        .then((person) => {
+          let personsCopy = [...this.state.persons];
+          personsCopy = personsCopy.filter((person) => person.id !== duplicateID);
+
+          this.setState({
+            persons: personsCopy.concat(person),
+            newName: '',
+            newNumber: '',
+          });
+        });
+    } else { 
+      // new person added
+      personService.create(newPerson)
+      .then((person) => {
         this.setState({
-          persons: this.state.persons.concat(persons),
+          persons: this.state.persons.concat(person),
           newName: '',
           newNumber: '',
         });
       });
-    
+    }
   }
 
   checkDuplicate = (name) => {
     const duplicate = this.state.persons.filter((person) => person.name === name);
-    return !!duplicate.length;
+    if(duplicate.length > 0) {
+      return duplicate[0].id;
+    } else {
+      return 0;
+    }
   }
 
   filterPersons = (e) => {
