@@ -2,6 +2,7 @@ import React from 'react';
 import AddForm from './components/AddForm';
 import Person from './components/Person';
 import personService from './services/persons'; // includes axios
+import Notification from './components/Notification';
 
 class App extends React.Component {
   constructor(props) {
@@ -10,7 +11,8 @@ class App extends React.Component {
       persons: [],
       newName: '',
       newNumber: '',
-      filterText: ''
+      filterText: '',
+      message: null
     }
   }
 
@@ -64,8 +66,17 @@ class App extends React.Component {
             persons: personsCopy.concat(person),
             newName: '',
             newNumber: '',
+            message: `muokattiin: ${person.name}`
           });
-        });
+          setTimeout(() => {
+            this.setState({message: null})
+          }, 5000)
+        }).catch(error => {
+          this.setState({
+             persons: this.state.persons.filter(p => p.name !== newPerson.name) ,
+             message: `henkilö '${newPerson.name}' on jo valitettavasti poistettu palvelimelta`
+          })
+        })
     } else { 
       // new person added
       personService.create(newPerson)
@@ -74,7 +85,11 @@ class App extends React.Component {
           persons: this.state.persons.concat(person),
           newName: '',
           newNumber: '',
+          message: `lisättiin: ${person.name}`
         });
+        setTimeout(() => {
+          this.setState({message: null})
+        }, 5000)
       });
     }
   }
@@ -97,13 +112,25 @@ class App extends React.Component {
   deletePerson = (id, name) => {
     return () => {
       const result = window.confirm(`Poistetaanko ${name}?`);
-      console.log(id)
+
       if (result) {
-        personService.deletePerson(id);
-        const filteredPersons = this.state.persons.filter((person) => person.id !== id);
-        this.setState({
-          persons: filteredPersons
-        });
+        personService.deletePerson(id)
+          .then(() => {
+            const filteredPersons = this.state.persons.filter((person) => person.id !== id);
+            this.setState({
+              persons: filteredPersons,
+              message: `poistettiin: ${name}`
+            });
+            setTimeout(() => {
+              this.setState({message: null})
+            }, 5000)
+          })
+          .catch(error => {
+            this.setState({
+               persons: this.state.persons.filter(p => p.name !== name) ,
+               message: `henkilö '${name}' on jo valitettavasti poistettu palvelimelta`
+            })
+          })
       }
     }
   }
@@ -125,6 +152,7 @@ class App extends React.Component {
     return (
       <div>
         <h2>Puhelinluettelo</h2>
+        <Notification message={this.state.message} />
         <p>rajaa näytettäviä <input onChange={this.filterPersons}/></p>
         <AddForm 
           newName={this.state.newName} 
