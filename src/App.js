@@ -140,7 +140,7 @@ class App extends React.Component {
       <table>
         <tbody>
           {this.state.persons
-            .filter((person) => person.name.indexOf(this.state.filterText) !== -1)
+            .filter((person) => person.name.toLowerCase().indexOf(this.state.filterText.toLowerCase()) !== -1)
             .map((person) => <Person person={person} key={person.name} deletePerson={this.deletePerson(person.id, person.name)}/>)
           }
         </tbody>
