@@ -13,7 +13,8 @@ const Country = (props) => {
     )
   } else {
     return (
-      <p key={props.country.name} onClick={ () => alert('tehtävä 2.13* kesken') } >{props.country.name} </p>
+      <p key={props.country.name} onClick={() => props.handleCountryClick(props.country.name) } >{props.country.name} </p>
+      // <p key={props.country.name} onClick={ () => alert(`${props.country.name}`) } >{props.country.name} </p>
     )
   }
 

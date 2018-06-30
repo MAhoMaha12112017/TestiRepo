@@ -29,12 +29,22 @@ class AppMaat extends Component {
       countriesToShow: countriesFiltered
     });
   }
+
+  handleCountryClick = (countryName) => {
+    const countryFiltered = this.state.maat
+      .find((country) => country.name === countryName);
+      // console.log('countryFiltered', countryFiltered)
+      const countryToAdd = {...countryFiltered}
+    this.setState({
+      countriesToShow: countryToAdd
+    });
+  }
   
   render() {
     return(
       <div>
         <p>find countries <input onChange={this.filterCountries}/></p>
-        <Countries countries={this.state.countriesToShow} />
+        <Countries countries={this.state.countriesToShow} handleCountryClick={this.handleCountryClick}/>
       </div>
     );
   }
