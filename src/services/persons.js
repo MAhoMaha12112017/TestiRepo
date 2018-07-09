@@ -1,6 +1,6 @@
 import axios from 'axios';
-// const baseUrl = 'http://localhost:3001/persons';
-const baseUrl = 'http://localhost:3001/api/persons';
+// const baseUrl = 'http://localhost:3001/persons';  // with JSON Server
+const baseUrl = 'http://localhost:3001/api/persons'; // with cors and node
 
 const getAll = () => {
   return axios.get(baseUrl).then((r) => r.data);
