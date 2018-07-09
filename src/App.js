@@ -77,13 +77,11 @@ class App extends React.Component {
             persons: personsCopy.concat(person),
             newName: '',
             newNumber: '',
-            // message: `muokattiin: ${person.name}`
           });
           this.notify(`muokattiin: ${person.name}`);
         }).catch(error => {
           this.setState({
              persons: this.state.persons.filter(p => p.name !== newPerson.name) ,
-            //  message: `henkilö '${newPerson.name}' on jo valitettavasti poistettu palvelimelta`
           });
           this.notify(`henkilö '${newPerson.name}' on jo valitettavasti poistettu palvelimelta`);
         })
@@ -95,7 +93,6 @@ class App extends React.Component {
           persons: this.state.persons.concat(person),
           newName: '',
           newNumber: '',
-          // message: `lisättiin: ${person.name}`
         });
         this.notify(`lisättiin: ${person.name}`);
       });
@@ -116,19 +113,18 @@ class App extends React.Component {
       const result = window.confirm(`Poistetaanko ${name}?`);
 
       if (result) {
-        personService.deletePerson(id)
+        personService
+        .deletePerson(id)
           .then(() => {
             const filteredPersons = this.state.persons.filter((person) => person.id !== id);
             this.setState({
               persons: filteredPersons,
-              // message: `poistettiin: ${name}`
             });
             this.notify(`poistettiin: ${name}`);
           })
           .catch(error => {
             this.setState({
                persons: this.state.persons.filter(p => p.name !== name) ,
-              //  message: `henkilö '${name}' on jo valitettavasti poistettu palvelimelta`
             });
             this.notify(`henkilö '${name}' on jo valitettavasti poistettu palvelimelta`);
           })
