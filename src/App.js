@@ -53,58 +53,67 @@ class App extends React.Component {
   addPerson = (e) => {
     e.preventDefault();
 
-    const newPerson = {
+    const personToAdd = {
       name: this.state.newName,
       number: this.state.newNumber,
     };
 
+    // check if person exists or not
     const duplicateID = this.checkDuplicate(this.state.newName);
     if (duplicateID) { // person exists
 
-      // confirmation needed
+      // confirmation needed for update
       const confirmation = window.confirm(`${this.state.newName} on jo luettelossa, korvataanko vanha numero uudella?`);
       if (!confirmation) {
         return;
       }
-
       // old person updated
-      personService.update(duplicateID, newPerson)
-        .then((person) => {
-          let personsCopy = [...this.state.persons];
-          personsCopy = personsCopy.filter((person) => person.id !== duplicateID);
+      this.updatePerson(duplicateID, personToAdd)
 
-          this.setState({
-            persons: personsCopy.concat(person),
-            newName: '',
-            newNumber: '',
-          });
-          this.notify(`muokattiin: ${person.name}`);
-        }).catch(error => {
-          this.setState({
-             persons: this.state.persons.filter(p => p.name !== newPerson.name) ,
-          });
-          this.notify(`henkilö '${newPerson.name}' on jo valitettavasti poistettu palvelimelta`);
-        })
     } else { 
       // new person added
-      personService.create(newPerson)
-      .then((person) => {
-        this.setState({
-          persons: this.state.persons.concat(person),
-          newName: '',
-          newNumber: '',
-        });
-        this.notify(`lisättiin: ${person.name}`);
-      });
+      this.createPerson(personToAdd);
     }
   }
 
+  // old person updated
+  updatePerson = (duplicateID, personToAdd) => {
+    personService.update(duplicateID, personToAdd)
+    .then((person) => { 
+      this.setState({
+        persons: this.state.persons.map(person => person.id !== duplicateID ? person : personToAdd ),
+        newName: '',
+        newNumber: '',
+      });
+      this.notify(`muokattiin: ${person.name}`);
+    }).catch(error => {
+      this.setState({
+         persons: this.state.persons.filter(p => p.name !== personToAdd.name) ,
+      });
+      this.notify(`henkilö '${personToAdd.name}' on jo valitettavasti poistettu palvelimelta`);
+    })
+  }
+  
+  // new person added
+  createPerson = (personToAdd) => {
+    personService.create(personToAdd)
+    .then((person) => {
+      this.setState({
+        persons: this.state.persons.concat(person),
+        newName: '',
+        newNumber: '',
+      });
+      this.notify(`lisättiin: ${person.name}`);
+    });
+  }
+
+
   checkDuplicate = (name) => {
-    const duplicate = this.state.persons.filter((person) => person.name === name);
-    if(duplicate.length > 0) {
-      return duplicate[0].id;
+    const duplicatePerson = this.state.persons.find((person) => person.name === name);
+    if(duplicatePerson) {
+      return duplicatePerson.id;
     } else {
-      return 0;
+      return 0; // not found, return 0
     }
   }
 
